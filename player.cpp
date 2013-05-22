@@ -352,7 +352,8 @@ void player::update_morale()
 
 void player::update_mental_focus()
 {
-    int focus_gain_rate = calc_focus_equilibrium() - xp_pool;
+    int raw_focus_gain_rate = calc_focus_equilibrium();
+    int focus_gain_rate = raw_focus_gain_rate - xp_pool;
 
     // handle negative gain rates in a symmetric manner
     int base_change = 1;
@@ -370,7 +371,14 @@ void player::update_mental_focus()
         gain++;
     }
 
+    int old_xp_pool = xp_pool;
     xp_pool += (gain * base_change);
+
+    char message[100];
+    snprintf(message, 100, "(%d->%d) Morale %d: %+d%%",
+             old_xp_pool, xp_pool, raw_focus_gain_rate, 
+             raw_focus_gain_rate - old_xp_pool);
+    log_to_file("focus.log", message);
 }
 
 // written mostly by FunnyMan3595 in Github issue #613 (DarklingWolf's repo),
@@ -6320,6 +6328,11 @@ void player::practice (const calendar& turn, Skill *s, int amount)
         {
             xp_pool--;
         }
+
+        char message[100];
+        snprintf(message, 100, "(%d->%d) Trained %s +%d",
+                 chance_to_drop, xp_pool, s->name().c_str(), amount);
+        log_to_file("focus.log", message);
     }
 
     skillLevel(s).practice(turn);

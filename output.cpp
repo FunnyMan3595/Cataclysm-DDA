@@ -328,6 +328,14 @@ void realDebugmsg(const char* filename, const char* line, const char *mes, ...)
  attroff(c_red);
 }
 
+void log_to_file(const char *filename, const char *message)
+{
+    std::ofstream fout;
+    fout.open(filename, std::ios_base::app | std::ios_base::out);
+    fout << message << std::endl;
+    fout.close();
+}
+
 bool query_yn(const char *mes, ...)
 {
  bool force_uc = OPTIONS[OPT_FORCE_YN];

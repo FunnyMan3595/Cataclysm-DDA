@@ -11,6 +11,7 @@
 #include "options.h"
 #include "mapbuffer.h"
 #include "debug.h"
+#include "parachute.h"
 #include <sys/stat.h>
 #include <cstdlib>
 #include <signal.h>
@@ -19,6 +20,10 @@ void exit_handler(int s);
 
 int main(int argc, char *argv[])
 {
+  // Prime the crash parachute with the name of the executable.
+  // This also sets up signal handlers for the common "we crashed" signals.
+  setup_parachute(argv[0]);
+
 #ifdef ENABLE_LOGGING
   setupDebug();
 #endif
